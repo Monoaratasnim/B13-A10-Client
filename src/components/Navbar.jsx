@@ -66,19 +66,29 @@ export default function Navbar() {
         {/* ================= DESKTOP ================= */}
         <div className="flex h-18 items-center justify-between">
 
-          {/* LOGO */}
-          <Link href="/" className="flex items-center gap-3">
-            <div className="h-11 w-11 flex items-center justify-center rounded-2xl bg-rose-500 text-white font-bold">
-              📚
-            </div>
+{/* LOGO */}
+<Link href="/" className="flex items-center gap-3 sm:gap-4">
 
-            <div>
-              <h1 className="text-xl font-bold text-stone-800">Fable</h1>
-              <p className="text-xs text-stone-500 -mt-1">
-                Discover Stories
-              </p>
-            </div>
-          </Link>
+ {/* Logo Image */}
+<div className="h-14 w-14 sm:h-16 sm:w-16 md:h-18 md:w-18 lg:h-20 lg:w-20 flex items-center justify-center">
+  <img
+    src="/images/logo.png"
+    alt="Fable"
+    className="h-full w-full object-contain scale-110 sm:scale-125"
+  />
+</div>
+
+  {/* Brand Text */}
+  <div className="flex flex-col justify-center leading-none">
+    <h1 className="text-lg sm:text-xl font-semibold text-stone-800">
+      Fable
+    </h1>
+    <p className="text-[10px] sm:text-xs text-stone-500">
+      Discover Stories
+    </p>
+  </div>
+
+</Link>
 
           {/* NAV */}
           <div className="hidden md:flex items-center gap-8">

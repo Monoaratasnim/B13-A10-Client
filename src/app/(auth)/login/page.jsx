@@ -90,10 +90,7 @@ export default function LoginPage() {
         {/* HEADER */}
         <div className="text-center mb-8">
 
-          <div className="h-16 w-16 mx-auto rounded-2xl bg-gradient-to-r from-rose-400 to-pink-500 flex items-center justify-center text-white text-2xl shadow-lg">
-            📚
-          </div>
-
+      
           <h1 className="mt-4 text-3xl font-bold text-stone-800">
             Welcome Back
           </h1>
