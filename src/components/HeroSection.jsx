@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, EffectFade } from "swiper/modules";
 
@@ -30,6 +31,7 @@ const slides = [
 export default function HeroSwiper() {
   return (
     <section className="relative w-full">
+
       <Swiper
         modules={[Autoplay, Pagination, EffectFade]}
         autoplay={{
@@ -39,13 +41,15 @@ export default function HeroSwiper() {
         pagination={{ clickable: true }}
         effect="fade"
         loop
-       className="h-[60vh] sm:h-[70vh] lg:h-screen"
+        className="h-[60vh] sm:h-[70vh] lg:h-screen"
       >
+
         {slides.map((slide, index) => (
-          <SwiperSlide key={index}>
+          <SwiperSlide key={`slide-${index}`}>
+
             <div className="relative w-full h-full">
 
-              {/* Background */}
+              {/* Background Image */}
               <Image
                 src={slide.image}
                 alt={slide.title}
@@ -61,43 +65,69 @@ export default function HeroSwiper() {
               {/* Content */}
               <div className="relative z-10 flex items-center justify-center lg:justify-start h-full px-4 sm:px-8 lg:px-16">
 
-                <div className="max-w-2xl text-center lg:text-left text-white">
+                {/* Animated Content Wrapper */}
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.7 }}
+                  className="max-w-2xl text-center lg:text-left text-white"
+                >
 
                   {/* Tagline */}
-                  <p className="text-rose-400 uppercase tracking-[0.25em] text-[10px] sm:text-xs font-semibold mb-2 sm:mb-3">
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.1, duration: 0.6 }}
+                    className="text-rose-400 uppercase tracking-[0.25em] text-[10px] sm:text-xs font-semibold mb-2 sm:mb-3"
+                  >
                     Discover • Read • Publish
-                  </p>
+                  </motion.p>
 
                   {/* Title */}
-                  <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-bold leading-tight">
+                  <motion.h1
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2, duration: 0.7 }}
+                    className="text-2xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-bold leading-tight"
+                  >
                     {slide.title}
-                  </h1>
+                  </motion.h1>
 
                   {/* Description */}
-                  <p className="mt-3 sm:mt-5 text-sm sm:text-base md:text-lg text-gray-200 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                  <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3, duration: 0.7 }}
+                    className="mt-3 sm:mt-5 text-sm sm:text-base md:text-lg text-gray-200 max-w-xl mx-auto lg:mx-0 leading-relaxed"
+                  >
                     {slide.desc}
-                  </p>
+                  </motion.p>
 
                   {/* Buttons */}
-                  <div className="mt-5 sm:mt-7 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4, duration: 0.7 }}
+                    className="mt-5 sm:mt-7 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start"
+                  >
 
                     <Link
                       href="/ebooks"
-                      className="px-6 sm:px-6 py-3 bg-rose-600 hover:bg-rose-700 rounded-xl font-semibold text-center transition"
+                      className="px-6 sm:px-8 py-3 bg-rose-600 hover:bg-rose-700 rounded-xl font-semibold text-center transition"
                     >
                       Browse Ebooks
                     </Link>
 
                     <Link
                       href="/register"
-                      className="px-6 sm:px-6 py-3 border border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-xl font-semibold text-center transition"
+                      className="px-6 sm:px-8 py-3 border border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-xl font-semibold text-center transition"
                     >
                       Become a Writer
                     </Link>
 
-                  </div>
+                  </motion.div>
 
-                  {/* Stats (compact on mobile) */}
+                  {/* Stats */}
                   <div className="mt-6 sm:mt-10 flex flex-wrap justify-center lg:justify-start gap-5 sm:gap-10">
 
                     <div className="text-center lg:text-left">
@@ -129,11 +159,13 @@ export default function HeroSwiper() {
 
                   </div>
 
-                </div>
+                </motion.div>
               </div>
             </div>
+
           </SwiperSlide>
         ))}
+
       </Swiper>
 
       {/* Pagination */}
@@ -155,6 +187,7 @@ export default function HeroSwiper() {
           transform: scale(1.2);
         }
       `}</style>
+
     </section>
   );
 }
