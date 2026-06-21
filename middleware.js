@@ -11,17 +11,21 @@ export async function middleware(req) {
     return NextResponse.next();
   }
 
-  // Get session safely
+  // Get session
   const session = await auth.api.getSession({
-    headers: req.headers,
+    headers: Object.fromEntries(req.headers),
   });
 
-  // ❌ Not logged in → login
+  // Not logged in → redirect login
   if (!session?.user) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  const role = session.user.role || "user";
+  const role = session.user.role;
+
+  if (!role) {
+    return NextResponse.redirect(new URL("/login", req.url));
+  }
 
   // ================= ROLE PROTECTION =================
 
@@ -35,14 +39,10 @@ export async function middleware(req) {
     }
   }
 
-  if (pathname.startsWith("/dashboard/user")) {
-    return NextResponse.next();
-  }
-
   return NextResponse.next();
 }
 
-// IMPORTANT: matcher fix
+// Routes protection
 export const config = {
   matcher: [
     "/dashboard/:path*",

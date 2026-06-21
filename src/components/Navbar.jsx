@@ -93,7 +93,7 @@ export default function Navbar() {
           {/* NAV */}
           <div className="hidden md:flex items-center gap-8">
             <Link href="/" className={navLinkClass("/")}>Home</Link>
-            <Link href="/ebooks" className={navLinkClass("/ebooks")}>
+            <Link href="/browse" className={navLinkClass("/browse")}>
               Browse Ebooks
             </Link>
 
@@ -177,7 +177,7 @@ export default function Navbar() {
           <div className="md:hidden border-t py-4">
 
             <Link href="/" className="block py-2">Home</Link>
-            <Link href="/ebooks" className="block py-2">Browse</Link>
+            <Link href="/browse" className="block py-2">Browse</Link>
 
             {!isLoggedIn ? (
               <>
