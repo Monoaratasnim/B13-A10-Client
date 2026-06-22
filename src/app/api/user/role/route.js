@@ -2,11 +2,10 @@ import { NextResponse } from "next/server";
 import { MongoClient } from "mongodb";
 import { auth } from "@/lib/auth";
 
-// ================= CONNECTION CACHE =================
 const uri = process.env.MONGODB_URI;
 
 if (!uri) {
-  throw new Error("MONGODB_URI is missing in environment variables");
+  throw new Error("MONGODB_URI is missing");
 }
 
 let client;
@@ -19,7 +18,6 @@ if (!global._mongoClientPromise) {
 
 clientPromise = global._mongoClientPromise;
 
-// ================= PATCH ROUTE =================
 export async function PATCH(req) {
   try {
     const dbClient = await clientPromise;
@@ -37,8 +35,27 @@ export async function PATCH(req) {
       );
     }
 
-    // ================= VALIDATE ROLE =================
-    const { role } = await req.json();
+    // ================= CHECK ADMIN =================
+    const currentUser = await db.collection("user").findOne({
+      email: session.user.email,
+    });
+
+    if (!currentUser || currentUser.role !== "admin") {
+      return NextResponse.json(
+        { message: "Forbidden: Admin only" },
+        { status: 403 }
+      );
+    }
+
+    // ================= GET TARGET USER =================
+    const { email, role } = await req.json();
+
+    if (!email || !role) {
+      return NextResponse.json(
+        { message: "Email and role required" },
+        { status: 400 }
+      );
+    }
 
     const allowedRoles = ["user", "writer", "admin"];
 
@@ -49,9 +66,9 @@ export async function PATCH(req) {
       );
     }
 
-    // ================= UPDATE USER ROLE =================
-    const result = await db.collection("users").updateOne(
-      { email: session.user.email },
+    // ================= UPDATE TARGET USER =================
+    const result = await db.collection("user").updateOne(
+      { email },
       {
         $set: {
           role,
@@ -69,8 +86,9 @@ export async function PATCH(req) {
 
     return NextResponse.json({
       success: true,
-      message: "Role updated successfully",
+      message: "User role updated successfully",
     });
+
   } catch (err) {
     console.error("ROLE UPDATE ERROR:", err);
 
