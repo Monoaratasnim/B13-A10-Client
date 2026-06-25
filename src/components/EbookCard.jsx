@@ -1,46 +1,51 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
 
 export default function EbookCard({ ebook }) {
   return (
-    <motion.div
-      whileHover={{ y: -6, scale: 1.03 }}
-      transition={{ duration: 0.2 }}
-      className="group overflow-hidden rounded-2xl border bg-white shadow-sm hover:shadow-xl"
-    >
-      <Link href={`/ebooks/${ebook._id}`}>
-        <div className="overflow-hidden">
+    <Link href={`/ebooks/${ebook._id}`}>
+      <div className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+
+        {/* IMAGE */}
+        <div className="relative overflow-hidden">
           <img
             src={ebook.coverImage}
             alt={ebook.title}
-            className="h-56 w-full object-cover transition duration-300 group-hover:scale-110"
+            className="w-full h-52 sm:h-60 object-cover group-hover:scale-105 transition duration-500"
           />
+
+          {ebook.sold && (
+            <span className="absolute top-3 right-3 bg-red-500 text-white text-xs font-semibold px-3 py-1 rounded-full shadow">
+              Sold
+            </span>
+          )}
         </div>
 
+        {/* CONTENT */}
         <div className="p-4">
-          <h2 className="line-clamp-1 text-lg font-semibold">
-            {ebook.title}
-          </h2>
 
-          <p className="mt-1 text-sm text-gray-500">
-            {ebook.author}
+          <h3 className="font-bold text-gray-900 line-clamp-1 text-sm sm:text-base">
+            {ebook.title}
+          </h3>
+
+          <p className="text-gray-500 text-sm mt-1 line-clamp-1">
+            By {ebook.writerName}
           </p>
 
-          <div className="mt-4 flex items-center justify-between">
-            <p className="font-bold text-rose-500">
-              ${ebook.price}
-            </p>
+          <div className="flex justify-between items-center mt-4">
 
-            {ebook.sold && (
-              <span className="rounded-full bg-black px-3 py-1 text-xs text-white">
-                Sold
-              </span>
-            )}
+            <span className="text-rose-600 font-bold text-lg">
+              ${ebook.price}
+            </span>
+
+            <button className="text-sm bg-gray-900 text-white px-3 py-2 rounded-lg hover:bg-black transition">
+              View
+            </button>
+
           </div>
         </div>
-      </Link>
-    </motion.div>
+      </div>
+    </Link>
   );
 }

@@ -12,6 +12,7 @@ export default function EbookDetails({ ebook }) {
   const [loading, setLoading] = useState(false);
   const [buyLoading, setBuyLoading] = useState(false);
   const [alreadyPurchased, setAlreadyPurchased] = useState(false);
+  const [role, setRole] = useState(null);
 
   const userEmail = session?.user?.email;
 
@@ -19,6 +20,26 @@ export default function EbookDetails({ ebook }) {
     ebook?.writerEmail && userEmail
       ? ebook.writerEmail === userEmail
       : false;
+
+  const isAdmin = role === "admin";
+
+  // ================= ROLE =================
+  useEffect(() => {
+    if (!userEmail) return;
+
+    const loadRole = async () => {
+      try {
+        const res = await fetch("/api/user/role");
+        const data = await res.json();
+
+        setRole(data.role);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    loadRole();
+  }, [userEmail]);
 
   // ================= CHECK PURCHASE =================
   useEffect(() => {
@@ -31,6 +52,7 @@ export default function EbookDetails({ ebook }) {
         );
 
         const data = await res.json();
+
         setAlreadyPurchased(!!data?.purchased);
       } catch (err) {
         console.log(err);
@@ -42,7 +64,7 @@ export default function EbookDetails({ ebook }) {
 
   // ================= CHECK BOOKMARK =================
   useEffect(() => {
-    if (!userEmail || !ebook?._id) return;
+    if (!userEmail || !ebook?._id || isAdmin) return;
 
     const fetchBookmarks = async () => {
       try {
@@ -56,6 +78,7 @@ export default function EbookDetails({ ebook }) {
           const exists = data.some(
             (b) => String(b._id) === String(ebook._id)
           );
+
           setBookmarked(exists);
         }
       } catch (err) {
@@ -64,7 +87,7 @@ export default function EbookDetails({ ebook }) {
     };
 
     fetchBookmarks();
-  }, [ebook?._id, userEmail]);
+  }, [ebook?._id, userEmail, isAdmin]);
 
   // ================= BOOKMARK =================
   const handleBookmark = async () => {
@@ -74,13 +97,20 @@ export default function EbookDetails({ ebook }) {
         return;
       }
 
+      if (isAdmin) {
+        alert("Admin cannot bookmark ebooks");
+        return;
+      }
+
       setLoading(true);
 
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_URL}/api/bookmarks`,
         {
           method: "PATCH",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify({
             email: userEmail,
             ebookId: ebook._id,
@@ -103,7 +133,7 @@ export default function EbookDetails({ ebook }) {
     }
   };
 
-  // ================= STRIPE BUY =================
+  // ================= BUY =================
   const handleBuy = async () => {
     try {
       if (!userEmail) {
@@ -111,8 +141,13 @@ export default function EbookDetails({ ebook }) {
         return;
       }
 
+      if (isAdmin) {
+        alert("Admin cannot purchase ebooks");
+        return;
+      }
+
       if (isWriter) {
-        alert("Writer cannot buy their own ebook");
+        alert("Writer cannot buy own ebook");
         return;
       }
 
@@ -127,7 +162,9 @@ export default function EbookDetails({ ebook }) {
         `${process.env.NEXT_PUBLIC_URL}/api/create-checkout-session`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify({
             ebookId: ebook._id,
             userEmail,
@@ -154,117 +191,223 @@ export default function EbookDetails({ ebook }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 px-4 py-10">
-      <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
-        <div className="grid grid-cols-1 lg:grid-cols-2">
+  <div className="min-h-screen bg-slate-50 py-6 md:py-10 px-4">
+    <div className="max-w-7xl mx-auto">
 
-          {/* IMAGE */}
-          <div className="bg-gray-100 flex items-center justify-center p-6">
-            {!imgLoaded && (
-              <div className="w-full h-[420px] animate-pulse bg-gray-200 rounded-xl" />
-            )}
+      <div className="bg-white rounded-3xl shadow-lg overflow-hidden border border-gray-100">
 
-            <motion.img
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              src={ebook.coverImage}
-              alt={ebook.title}
-              onLoad={() => setImgLoaded(true)}
-              className="w-full max-w-sm h-[420px] object-cover rounded-xl shadow-md"
-            />
+        <div className="grid lg:grid-cols-2 gap-0">
+
+          {/* IMAGE SECTION */}
+          <div className="bg-gradient-to-br from-slate-100 to-slate-200 p-6 md:p-10 flex justify-center items-start">
+
+            <div className="w-full max-w-md lg:sticky lg:top-8">
+
+              {!imgLoaded && (
+                <div className="w-full h-[500px] rounded-2xl bg-gray-300 animate-pulse" />
+              )}
+
+              <motion.img
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4 }}
+                src={ebook.coverImage}
+                alt={ebook.title}
+                onLoad={() => setImgLoaded(true)}
+                className="
+                  w-full
+                  h-[420px]
+                  sm:h-[500px]
+                  object-cover
+                  rounded-2xl
+                  shadow-2xl
+                  border
+                "
+              />
+            </div>
+
           </div>
 
           {/* CONTENT */}
           <motion.div
-            initial={{ opacity: 0, x: 30 }}
+            initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
-            className="p-6 sm:p-10 flex flex-col justify-center"
+            className="p-6 md:p-10"
           >
-            <h1 className="text-3xl font-bold">{ebook.title}</h1>
 
-            <p className="text-gray-500 mt-2">
-              By {ebook.writerEmail}
+            {/* TITLE */}
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
+              {ebook.title}
+            </h1>
+
+            <p className="mt-3 text-gray-500 text-sm md:text-base">
+              Written by{" "}
+              <span className="font-semibold text-gray-700">
+                {ebook.writerName}
+              </span>
             </p>
 
-            <div className="mt-6 grid grid-cols-2 gap-3 text-sm">
-              <p><b>Genre:</b> {ebook.genre}</p>
-              <p><b>Price:</b> ${ebook.price}</p>
+            {/* INFO CARDS */}
+            <div className="grid grid-cols-2 gap-4 mt-8">
 
-              <p>
-                <b>Status:</b>{" "}
-                <span
-                  className={
+              <div className="bg-slate-50 border rounded-xl p-4">
+                <p className="text-xs text-gray-500">
+                  Genre
+                </p>
+                <h4 className="font-semibold mt-1">
+                  {ebook.genre}
+                </h4>
+              </div>
+
+              <div className="bg-slate-50 border rounded-xl p-4">
+                <p className="text-xs text-gray-500">
+                  Price
+                </p>
+                <h4 className="font-semibold mt-1">
+                  ${ebook.price}
+                </h4>
+              </div>
+
+              <div className="bg-slate-50 border rounded-xl p-4">
+                <p className="text-xs text-gray-500">
+                  Status
+                </p>
+
+                <h4
+                  className={`font-semibold mt-1 ${
                     alreadyPurchased
                       ? "text-blue-600"
                       : ebook.sold
                       ? "text-red-500"
                       : "text-green-600"
-                  }
+                  }`}
                 >
                   {alreadyPurchased
                     ? "Purchased"
                     : ebook.sold
                     ? "Sold"
                     : "Available"}
-                </span>
-              </p>
+                </h4>
+              </div>
 
-              <p>
-                <b>Date:</b>{" "}
-                {ebook.createdAt
-                  ? new Date(ebook.createdAt).toLocaleDateString()
-                  : "N/A"}
-              </p>
+              <div className="bg-slate-50 border rounded-xl p-4">
+                <p className="text-xs text-gray-500">
+                  Uploaded
+                </p>
+
+                <h4 className="font-semibold mt-1">
+                  {new Date(
+                    ebook.createdAt
+                  ).toLocaleDateString()}
+                </h4>
+              </div>
+
             </div>
 
-            <div className="mt-6">
-              <h3 className="font-semibold">Description</h3>
-              <p className="text-gray-600 mt-2">
-                {ebook.description || "No description available."}
-              </p>
-            </div>
+            {/* DESCRIPTION */}
+            <div className="mt-8">
 
-            {/* BUTTONS */}
-            <div className="mt-8 flex gap-3">
+              <h3 className="text-xl font-bold text-gray-900 mb-4">
+                Description
+              </h3>
 
-              {/* BOOKMARK */}
-              <button
-                onClick={handleBookmark}
-                disabled={loading}
-                className={`px-5 py-3 rounded-lg border transition ${
-                  bookmarked
-                    ? "bg-black text-white"
-                    : "hover:bg-gray-100"
-                }`}
+              <div
+                className="
+                  bg-gray-50
+                  border
+                  rounded-2xl
+                  p-5
+                  max-h-[350px]
+                  overflow-y-auto
+                "
               >
-                {loading
-                  ? "Loading..."
-                  : bookmarked
-                  ? "Bookmarked ✓"
-                  : "Bookmark"}
-              </button>
-
-              {/* BUY NOW */}
-              <button
-                onClick={handleBuy}
-                disabled={isWriter || buyLoading || alreadyPurchased}
-                className="px-5 py-3 rounded-lg bg-rose-500 text-white disabled:opacity-50"
-              >
-                {buyLoading
-                  ? "Processing..."
-                  : isWriter
-                  ? "You are writer"
-                  : alreadyPurchased
-                  ? "Already Purchased"
-                  : ebook.sold
-                  ? "Sold Out"
-                  : "Buy Now"}
-              </button>
+                <p className="text-gray-700 whitespace-pre-line leading-8 text-sm md:text-base">
+                  {ebook.description}
+                </p>
+              </div>
 
             </div>
+
+            {/* ACTION BUTTONS */}
+            {!isAdmin && (
+              <div className="flex flex-col sm:flex-row gap-4 mt-8">
+
+                <button
+                  onClick={handleBookmark}
+                  disabled={loading}
+                  className={`
+                    w-full
+                    sm:w-auto
+                    px-6
+                    py-3
+                    rounded-xl
+                    border
+                    font-medium
+                    transition
+                    ${
+                      bookmarked
+                        ? "bg-black text-white"
+                        : "bg-white hover:bg-gray-100"
+                    }
+                  `}
+                >
+                  {loading
+                    ? "Loading..."
+                    : bookmarked
+                    ? "Bookmarked ✓"
+                    : "Bookmark"}
+                </button>
+
+                <button
+                  onClick={handleBuy}
+                  disabled={
+                    isWriter ||
+                    buyLoading ||
+                    alreadyPurchased
+                  }
+                  className="
+                    w-full
+                    sm:w-auto
+                    px-6
+                    py-3
+                    rounded-xl
+                    bg-rose-500
+                    hover:bg-rose-600
+                    text-white
+                    font-medium
+                    transition
+                    disabled:opacity-50
+                    disabled:cursor-not-allowed
+                  "
+                >
+                  {buyLoading
+                    ? "Processing..."
+                    : isWriter
+                    ? "You are Writer"
+                    : alreadyPurchased
+                    ? "Already Purchased"
+                    : ebook.sold
+                    ? "Sold Out"
+                    : "Buy Now"}
+                </button>
+
+              </div>
+            )}
+
+            {/* ADMIN MESSAGE */}
+            {isAdmin && (
+              <div className="mt-8 bg-yellow-50 border border-yellow-200 rounded-2xl p-5">
+                <p className="text-yellow-700 font-medium">
+                  Admin accounts can manage ebooks but cannot purchase or bookmark ebooks.
+                </p>
+              </div>
+            )}
+
           </motion.div>
+
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 }

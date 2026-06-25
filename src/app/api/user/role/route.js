@@ -18,12 +18,46 @@ if (!global._mongoClientPromise) {
 
 clientPromise = global._mongoClientPromise;
 
+// ================= GET CURRENT USER ROLE =================
+export async function GET(req) {
+  try {
+    const dbClient = await clientPromise;
+    const db = dbClient.db("fable");
+
+    const session = await auth.api.getSession({
+      headers: req.headers,
+    });
+
+    if (!session?.user?.email) {
+      return NextResponse.json(
+        { role: null },
+        { status: 401 }
+      );
+    }
+
+    const user = await db.collection("user").findOne({
+      email: session.user.email,
+    });
+
+    return NextResponse.json({
+      role: user?.role || "user",
+    });
+  } catch (err) {
+    console.error("GET ROLE ERROR:", err);
+
+    return NextResponse.json(
+      { role: null },
+      { status: 500 }
+    );
+  }
+}
+
+// ================= UPDATE USER ROLE (ADMIN ONLY) =================
 export async function PATCH(req) {
   try {
     const dbClient = await clientPromise;
     const db = dbClient.db("fable");
 
-    // ================= GET SESSION =================
     const session = await auth.api.getSession({
       headers: req.headers,
     });
@@ -35,7 +69,6 @@ export async function PATCH(req) {
       );
     }
 
-    // ================= CHECK ADMIN =================
     const currentUser = await db.collection("user").findOne({
       email: session.user.email,
     });
@@ -47,7 +80,6 @@ export async function PATCH(req) {
       );
     }
 
-    // ================= GET TARGET USER =================
     const { email, role } = await req.json();
 
     if (!email || !role) {
@@ -66,7 +98,17 @@ export async function PATCH(req) {
       );
     }
 
-    // ================= UPDATE TARGET USER =================
+    // Prevent admin from removing own admin role
+    if (email === session.user.email) {
+      return NextResponse.json(
+        {
+          message:
+            "You cannot change your own admin role",
+        },
+        { status: 400 }
+      );
+    }
+
     const result = await db.collection("user").updateOne(
       { email },
       {
@@ -88,7 +130,6 @@ export async function PATCH(req) {
       success: true,
       message: "User role updated successfully",
     });
-
   } catch (err) {
     console.error("ROLE UPDATE ERROR:", err);
 

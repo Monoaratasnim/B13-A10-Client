@@ -23,8 +23,9 @@ export default function WriterDashboard() {
       try {
         setLoading(true);
 
-        // ✅ CHANGED HERE
-        const res = await fetch("/api/writer/stats");
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_URL}/api/writer/stats?email=${session.user.email}`
+        );
 
         const data = await res.json();
 
@@ -59,7 +60,6 @@ export default function WriterDashboard() {
 
   return (
     <div className="p-4 md:p-6 space-y-6">
-
       {/* HEADER */}
       <div className="bg-white p-6 rounded-xl shadow">
         <h1 className="text-2xl md:text-3xl font-bold">
@@ -73,7 +73,6 @@ export default function WriterDashboard() {
 
       {/* STATS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-
         <WriterStatsCard
           title="Total Ebooks"
           value={stats.totalEbooks}
@@ -94,12 +93,10 @@ export default function WriterDashboard() {
           color="purple"
           icon="📈"
         />
-
       </div>
 
-      {/* ACTIONS */}
+      {/* QUICK ACTIONS */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-
         <Link
           href="/dashboard/writer/add-ebook"
           className="bg-black text-white p-5 rounded-xl text-center hover:bg-gray-800 transition"
@@ -127,7 +124,6 @@ export default function WriterDashboard() {
         >
           💰 Sales History
         </Link>
-
       </div>
     </div>
   );
