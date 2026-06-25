@@ -21,12 +21,18 @@ export default function WriterDashboard() {
 
     const fetchStats = async () => {
       try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_URL}/api/writer/stats`
-        );
+        setLoading(true);
+
+        // ✅ CHANGED HERE
+        const res = await fetch("/api/writer/stats");
 
         const data = await res.json();
-        setStats(data);
+
+        setStats({
+          totalEbooks: data.totalEbooks || 0,
+          totalSales: data.totalSales || 0,
+          totalRevenue: data.totalRevenue || 0,
+        });
       } catch (err) {
         console.log(err);
       } finally {
@@ -35,13 +41,14 @@ export default function WriterDashboard() {
     };
 
     fetchStats();
-  }, [session]);
+  }, [session?.user?.email]);
 
   if (loading) {
     return (
-      <div className="p-6 space-y-6">
+      <div className="p-4 md:p-6 space-y-6">
         <div className="h-24 bg-gray-200 animate-pulse rounded-xl" />
-        <div className="grid md:grid-cols-3 gap-4">
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="h-28 bg-gray-200 rounded-xl animate-pulse" />
           <div className="h-28 bg-gray-200 rounded-xl animate-pulse" />
           <div className="h-28 bg-gray-200 rounded-xl animate-pulse" />
@@ -51,20 +58,21 @@ export default function WriterDashboard() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 md:p-6 space-y-6">
 
       {/* HEADER */}
       <div className="bg-white p-6 rounded-xl shadow">
-        <h1 className="text-2xl font-bold">
+        <h1 className="text-2xl md:text-3xl font-bold">
           Welcome Writer 👋 {session?.user?.name}
         </h1>
-        <p className="text-gray-500 text-sm">
+
+        <p className="text-gray-500 text-sm mt-2">
           Manage your ebooks, sales & revenue
         </p>
       </div>
 
       {/* STATS */}
-      <div className="grid md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 
         <WriterStatsCard
           title="Total Ebooks"
@@ -82,7 +90,7 @@ export default function WriterDashboard() {
 
         <WriterStatsCard
           title="Total Revenue"
-          value={`$${stats.totalRevenue}`}
+          value={`$${(stats.totalRevenue / 100).toFixed(2)}`}
           color="purple"
           icon="📈"
         />
@@ -90,7 +98,7 @@ export default function WriterDashboard() {
       </div>
 
       {/* ACTIONS */}
-      <div className="grid md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
 
         <Link
           href="/dashboard/writer/add-ebook"
@@ -107,6 +115,13 @@ export default function WriterDashboard() {
         </Link>
 
         <Link
+          href="/dashboard/writer/bookmarks"
+          className="bg-purple-600 text-white p-5 rounded-xl text-center hover:bg-purple-700 transition"
+        >
+          🔖 Bookmarks
+        </Link>
+
+        <Link
           href="/dashboard/writer/sales-history"
           className="bg-green-600 text-white p-5 rounded-xl text-center hover:bg-green-700 transition"
         >
@@ -114,7 +129,6 @@ export default function WriterDashboard() {
         </Link>
 
       </div>
-
     </div>
   );
 }
