@@ -112,7 +112,7 @@ export default function HeroSwiper() {
                   >
 
                     <Link
-                      href="/ebooks"
+                      href="/browse"
                       className="px-6 sm:px-8 py-3 bg-rose-600 hover:bg-rose-700 rounded-xl font-semibold text-center transition"
                     >
                       Browse Ebooks

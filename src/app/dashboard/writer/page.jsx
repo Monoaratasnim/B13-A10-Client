@@ -89,7 +89,7 @@ export default function WriterDashboard() {
 
         <WriterStatsCard
           title="Total Revenue"
-          value={`$${(stats.totalRevenue / 100).toFixed(2)}`}
+       value={`$${stats.totalRevenue.toFixed(2)}`}
           color="purple"
           icon="📈"
         />

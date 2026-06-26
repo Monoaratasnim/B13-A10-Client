@@ -100,7 +100,7 @@ export default function AdminDashboardPage() {
         <AdminStatsCard
           title="Revenue"
           value={`$${(
-            (stats.totalRevenue || 0) / 100
+            (stats.totalRevenue || 0) 
           ).toFixed(2)}`}
           icon="💰"
           color="orange"

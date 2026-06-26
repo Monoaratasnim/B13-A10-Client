@@ -66,9 +66,7 @@ export async function GET(req) {
             price: "$ebook.price",
 
             // Stripe stores cents
-            amount: {
-              $divide: ["$amount", 100],
-            },
+          amount: "$amount",
 
             createdAt: 1,
 

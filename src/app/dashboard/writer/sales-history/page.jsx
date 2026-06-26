@@ -1,16 +1,23 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { authClient } from "@/lib/auth-client";
 import SalesHistoryTable from "@/components/dashboard/writer/SalesHistoryTable";
 
 export default function SalesHistoryPage() {
+  const { data: session } = authClient.useSession();
+
   const [sales, setSales] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const email = session?.user?.email;
+
   const fetchSales = async () => {
+    if (!email) return;
+
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_URL}/api/writer/sales`
+        `${process.env.NEXT_PUBLIC_URL}/api/writer/sales?email=${email}`
       );
 
       const data = await res.json();
@@ -24,8 +31,10 @@ export default function SalesHistoryPage() {
   };
 
   useEffect(() => {
-    fetchSales();
-  }, []);
+    if (email) {
+      fetchSales();
+    }
+  }, [email]);
 
   if (loading) {
     return (
@@ -38,7 +47,6 @@ export default function SalesHistoryPage() {
 
   return (
     <div className="space-y-6">
-
       <div>
         <h1 className="text-3xl font-bold">
           Sales History
@@ -50,7 +58,6 @@ export default function SalesHistoryPage() {
       </div>
 
       <SalesHistoryTable sales={sales} />
-
     </div>
   );
 }
