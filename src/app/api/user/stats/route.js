@@ -8,42 +8,54 @@ if (!uri) {
   throw new Error("MONGODB_URI missing");
 }
 
-let client = new MongoClient(uri);
-let clientPromise = client.connect();
+const client = new MongoClient(uri);
+const clientPromise = client.connect();
 
 export async function GET(req) {
   try {
     const dbClient = await clientPromise;
     const db = dbClient.db("fable");
 
-    // ✅ SESSION
+    // Logged in user
     const session = await auth.api.getSession({
       headers: req.headers,
     });
 
     if (!session?.user?.email) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+      return NextResponse.json(
+        { message: "Unauthorized" },
+        { status: 401 }
+      );
     }
 
     const email = session.user.email;
 
-    // ✅ YOUR REAL COLLECTION
-    const user = await db.collection("user").findOne({ email });
-
-    // purchases
-    const purchases = await db
-      .collection("purchases")
-      .find({ email })
-      .toArray();
-
-    return NextResponse.json({
-      totalPurchases: purchases.length,
-      totalSpent: purchases.reduce((sum, p) => sum + (p.amount || 0), 0) / 100,
-      bookmarks: user?.bookmarks?.length || 0,
+    // User document
+    const user = await db.collection("user").findOne({
+      email,
     });
 
+    // Purchases
+    const purchases = await db
+      .collection("purchases")
+      .find({
+        userEmail: email, // ✅ Correct field
+      })
+      .toArray();
+
+    const totalPurchases = purchases.length;
+
+    const totalSpent = purchases.reduce((sum, purchase) => {
+      return sum + (purchase.amount || 0);
+    }, 0);
+
+    return NextResponse.json({
+      totalPurchases,
+      totalSpent: totalSpent / 100, // convert cents to dollars
+      bookmarks: user?.bookmarks?.length || 0,
+    });
   } catch (err) {
-    console.log("STATS ERROR:", err);
+    console.error("Stats Error:", err);
 
     return NextResponse.json(
       { message: "Server error" },

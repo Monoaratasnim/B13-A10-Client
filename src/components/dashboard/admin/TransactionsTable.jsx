@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import TableSkeleton from "@/components/TableSkeleton";
 
 export default function TransactionsTable() {
   const [transactions, setTransactions] =
@@ -29,13 +30,11 @@ export default function TransactionsTable() {
     loadTransactions();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="bg-white p-8 rounded-2xl shadow">
-        Loading transactions...
-      </div>
-    );
-  }
+
+
+if (loading) {
+  return <TableSkeleton rows={6} />;
+}
 
   return (
     <div className="bg-white rounded-2xl shadow overflow-hidden">

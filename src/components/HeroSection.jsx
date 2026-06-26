@@ -118,12 +118,6 @@ export default function HeroSwiper() {
                       Browse Ebooks
                     </Link>
 
-                    <Link
-                      href="/register"
-                      className="px-6 sm:px-8 py-3 border border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-xl font-semibold text-center transition"
-                    >
-                      Become a Writer
-                    </Link>
 
                   </motion.div>
 

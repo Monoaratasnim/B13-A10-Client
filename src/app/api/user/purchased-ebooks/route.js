@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 import { auth } from "@/lib/auth";
+
 
 const uri = process.env.MONGODB_URI;
 
@@ -23,13 +24,19 @@ export async function GET(req) {
     const email = session.user.email;
 
     // purchases
-    const purchases = await db
-      .collection("purchases")
-      .find({ email })
-      .toArray();
+   const purchases = await db
+  .collection("purchases")
+  .find({
+    userEmail: email,
+  })
+  .toArray();
 
     // optional: enrich with ebook data
-    const ebookIds = purchases.map((p) => p.ebookId);
+  const ebookIds = purchases.map((p) =>
+  typeof p.ebookId === "string"
+    ? new ObjectId(p.ebookId)
+    : p.ebookId
+);
 
     const ebooks = await db
       .collection("ebooks")

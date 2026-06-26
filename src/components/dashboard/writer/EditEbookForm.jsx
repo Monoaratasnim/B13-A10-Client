@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function EditEbookForm({ ebook }) {
   const router = useRouter();
@@ -54,15 +55,19 @@ export default function EditEbookForm({ ebook }) {
       const data = await res.json();
 
       if (data.modifiedCount > 0) {
-        alert("Ebook Updated Successfully");
+        toast.success("Ebook Updated Successfully");
 
-        router.push(
-          "/dashboard/writer/manage-ebooks"
-        );
+        setTimeout(() => {
+          router.push(
+            "/dashboard/writer/manage-ebooks"
+          );
+        }, 1000);
+      } else {
+        toast.error("No changes were made");
       }
     } catch (error) {
       console.log(error);
-      alert("Failed to update ebook");
+      toast.error("Failed to update ebook");
     } finally {
       setLoading(false);
     }
@@ -211,11 +216,16 @@ export default function EditEbookForm({ ebook }) {
                 <option value="Biography">
                   Biography
                 </option>
-                 <option value="Self Development">
+
+                <option value="Self Development">
                   Self Development
-                </option> <option value="Thriller">
-                 Thriller
-                </option> <option value="Poetry">
+                </option>
+
+                <option value="Thriller">
+                  Thriller
+                </option>
+
+                <option value="Poetry">
                   Poetry
                 </option>
               </select>

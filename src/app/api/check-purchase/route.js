@@ -4,9 +4,7 @@ import { MongoClient, ObjectId } from "mongodb";
 const client = new MongoClient(process.env.MONGODB_URI);
 
 async function dbConnect() {
-  if (!client.topology?.isConnected()) {
-    await client.connect();
-  }
+  await client.connect();
   return client.db("fable");
 }
 
@@ -18,23 +16,32 @@ export async function GET(req) {
     const email = searchParams.get("email");
 
     if (!ebookId || !email) {
-      return NextResponse.json({ purchased: false });
+      return NextResponse.json({
+        purchased: false,
+      });
     }
 
     const db = await dbConnect();
 
-    const purchase = await db.collection("purchases").findOne({
-      ebookId: new ObjectId(ebookId),
-      email,
-    });
+const purchase = await db.collection("purchases").findOne({
+  ebookId,
+  userEmail: email,
+});
 
-    return NextResponse.json({
-      purchased: !!purchase,
-    });
+return NextResponse.json({
+  purchased: !!purchase,
+});
   } catch (err) {
+    console.error("Check Purchase Error:", err);
+
     return NextResponse.json(
-      { purchased: false, error: err.message },
-      { status: 500 }
+      {
+        purchased: false,
+        error: err.message,
+      },
+      {
+        status: 500,
+      }
     );
   }
 }

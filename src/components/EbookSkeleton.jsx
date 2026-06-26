@@ -1,4 +1,4 @@
-export default function EbookCardSkeleton() {
+export default function EbookSkeleton() {
   return (
     <div className="bg-white rounded-2xl overflow-hidden border animate-pulse">
 

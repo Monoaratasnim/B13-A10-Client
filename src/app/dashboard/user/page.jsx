@@ -63,7 +63,7 @@ export default function UserDashboardPage() {
         />
         <UserStatsCard
           title="Total Spent"
-          value={`$${stats?.totalSpent || 0}`}
+        value={`$${Number(stats?.totalSpent || 0).toFixed(2)}`}
         />
         <UserStatsCard
           title="Bookmarks"

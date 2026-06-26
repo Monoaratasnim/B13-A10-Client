@@ -1,156 +1,124 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+
 import AdminStatsCard from "@/components/dashboard/admin/AdminStatsCard";
+import MonthlySalesChart from "@/components/dashboard/admin/MonthlySalesChart";
+import GenrePieChart from "@/components/dashboard/admin/GenrePieChart";
 
-export default function AdminDashboard() {
-  const [stats, setStats] = useState({
-    totalUsers: 0,
-    totalWriters: 0,
-    totalAdmins: 0,
-    totalEbooks: 0,
-    totalSold: 0,
-    totalRevenue: 0,
-  });
-
+export default function AdminDashboardPage() {
+  const [stats, setStats] = useState({});
+  const [salesData, setSalesData] = useState([]);
+  const [genreData, setGenreData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadStats = async () => {
+    const loadDashboard = async () => {
       try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_URL}/api/admin/stats`
-        );
+        const [
+          statsRes,
+          salesRes,
+          genreRes,
+        ] = await Promise.all([
+          fetch(
+            `${process.env.NEXT_PUBLIC_URL}/api/admin/stats`
+          ),
+          fetch(
+            `${process.env.NEXT_PUBLIC_URL}/api/admin/monthly-sales`
+          ),
+          fetch(
+            `${process.env.NEXT_PUBLIC_URL}/api/admin/genre-stats`
+          ),
+        ]);
 
-        const data = await res.json();
+        const stats = await statsRes.json();
+        const sales = await salesRes.json();
+        const genres = await genreRes.json();
 
-        setStats(data);
-      } catch (err) {
-        console.log(err);
+        setStats(stats);
+        setSalesData(sales);
+        setGenreData(genres);
+      } catch (error) {
+        console.log(error);
       } finally {
         setLoading(false);
       }
     };
 
-    loadStats();
+    loadDashboard();
   }, []);
 
   if (loading) {
     return (
-      <div className="p-4 md:p-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[...Array(6)].map((_, i) => (
-            <div
-              key={i}
-              className="h-32 rounded-xl bg-gray-200 animate-pulse"
-            />
-          ))}
-        </div>
+      <div className="bg-white rounded-2xl shadow-md p-10 text-center">
+        <p className="text-gray-500">
+          Loading dashboard...
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="p-4 md:p-6 space-y-6">
+    <div className="space-y-8">
 
       {/* Header */}
-      <div className="bg-white rounded-2xl shadow p-6">
+      <div>
         <h1 className="text-3xl font-bold">
           Admin Dashboard
         </h1>
 
         <p className="text-gray-500 mt-2">
-          Platform analytics and management
+          Overview of users, writers, ebooks,
+          sales and revenue.
         </p>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+      {/* Analytics Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
 
         <AdminStatsCard
-          title="Users"
-          value={stats.totalUsers}
-          icon="👤"
+          title="Total Users"
+          value={stats.totalUsers || 0}
+          icon="👥"
           color="blue"
         />
 
         <AdminStatsCard
-          title="Writers"
-          value={stats.totalWriters}
+          title="Total Writers"
+          value={stats.totalWriters || 0}
           icon="✍️"
           color="green"
         />
 
         <AdminStatsCard
-          title="Admins"
-          value={stats.totalAdmins}
-          icon="🛡️"
-          color="purple"
-        />
-
-        <AdminStatsCard
-          title="Total Ebooks"
-          value={stats.totalEbooks}
+          title="Ebooks Sold"
+          value={stats.totalSold || 0}
           icon="📚"
-          color="orange"
-        />
-
-        <AdminStatsCard
-          title="Sold Ebooks"
-          value={stats.totalSold}
-          icon="🔥"
-          color="red"
+          color="purple"
         />
 
         <AdminStatsCard
           title="Revenue"
           value={`$${(
-            stats.totalRevenue / 100
+            (stats.totalRevenue || 0) / 100
           ).toFixed(2)}`}
           icon="💰"
-          color="pink"
+          color="orange"
         />
 
       </div>
 
-      {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Charts */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
-        <Link
-          href="/dashboard/admin/manage-users"
-          className="bg-blue-600 text-white p-5 rounded-xl text-center hover:bg-blue-700 transition"
-        >
-          👥 Manage Users
-        </Link>
+        <MonthlySalesChart
+          data={salesData}
+        />
 
-        <Link
-          href="/dashboard/admin/manage-ebooks"
-          className="bg-green-600 text-white p-5 rounded-xl text-center hover:bg-green-700 transition"
-        >
-          📚 Manage Ebooks
-        </Link>
+        <GenrePieChart
+          data={genreData}
+        />
 
-        <Link
-          href="/dashboard/admin/transactions"
-          className="bg-purple-600 text-white p-5 rounded-xl text-center hover:bg-purple-700 transition"
-        >
-          💳 Transactions
-        </Link>
-
-      </div>
-
-      {/* Analytics Placeholder */}
-      <div className="bg-white rounded-2xl shadow p-6">
-        <h2 className="text-xl font-bold mb-3">
-          Analytics
-        </h2>
-
-        <div className="h-80 rounded-xl bg-gray-100 flex items-center justify-center">
-          <p className="text-gray-500">
-            Monthly Sales Chart & Genre Pie Chart
-          </p>
-        </div>
       </div>
 
     </div>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 const genres = [
   "Fiction",
@@ -39,7 +40,7 @@ export default function AddEbookForm() {
       const imageFile = form.cover.files[0];
 
       if (!imageFile) {
-        alert("Please select a cover image");
+        toast.error("Please select a cover image");
         return;
       }
 
@@ -98,17 +99,17 @@ export default function AddEbookForm() {
       const result = await response.json();
 
       if (result.success) {
-        alert("Ebook added successfully");
+       toast.success("Ebook published successfully");
 
         form.reset();
 
         router.push("/dashboard/writer/manage-ebooks");
       } else {
-        alert("Failed to add ebook");
+        toast.error("Failed to add ebook");
       }
     } catch (error) {
       console.error(error);
-      alert("Something went wrong");
+      toast.error("Something went wrong");
     } finally {
       setLoading(false);
     }

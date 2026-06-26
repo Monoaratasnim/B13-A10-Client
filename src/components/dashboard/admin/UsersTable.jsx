@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import TableSkeleton from "@/components/TableSkeleton";
 
 export default function UsersTable() {
 const [users, setUsers] = useState([]);
@@ -47,7 +49,7 @@ body: JSON.stringify({ role }),
 
 
   if (!res.ok) {
-    alert("Role update failed");
+    toast.error("Role update failed");
     return;
   }
 
@@ -56,8 +58,10 @@ body: JSON.stringify({ role }),
       user._id === id ? { ...user, role } : user
     )
   );
+  toast.success("Role updated successfully");
 } catch (err) {
   console.log(err);
+  toast.error("Something went wrong");
 }
 
 
@@ -80,24 +84,26 @@ try {
   );
 
   if (!res.ok) {
-    alert("Delete failed");
+    toast.error("Delete failed");
     return;
   }
 
   setUsers((prev) =>
     prev.filter((user) => user._id !== id)
   );
+    toast.success("User deleted successfully");
 } catch (err) {
   console.log(err);
+  toast.error("Something went wrong");
 }
 
 
 };
 
+
+
 if (loading) {
-return ( <div className="bg-white rounded-2xl shadow-md p-10 text-center"> <p className="text-gray-500">
-Loading users... </p> </div>
-);
+  return <TableSkeleton rows={6} />;
 }
 
 return (

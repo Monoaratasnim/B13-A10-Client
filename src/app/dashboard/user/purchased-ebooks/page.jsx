@@ -6,6 +6,7 @@ import PurchasedEbooksGrid from "@/components/dashboard/user/PurchasedEbooksGrid
 
 export default function PurchasedEbooksPage() {
   const { data: session } = authClient.useSession();
+
   const [ebooks, setEbooks] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -16,12 +17,18 @@ export default function PurchasedEbooksPage() {
       try {
         setLoading(true);
 
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_URL}/api/user/purchased-ebooks`
-        );
+        const res = await fetch("/api/user/purchased-ebooks", {
+          credentials: "include",
+        });
 
         const data = await res.json();
+
+        console.log("Session:", session);
+        console.log("Purchased ebooks:", data);
+
         setEbooks(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("Fetch error:", err);
       } finally {
         setLoading(false);
       }
@@ -36,7 +43,7 @@ export default function PurchasedEbooksPage() {
         {Array.from({ length: 6 }).map((_, i) => (
           <div
             key={i}
-            className="h-72 bg-gray-200 animate-pulse rounded-xl"
+            className="h-72 rounded-xl bg-gray-200 animate-pulse"
           />
         ))}
       </div>

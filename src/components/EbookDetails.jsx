@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-client";
+import toast from "react-hot-toast";
 
 export default function EbookDetails({ ebook }) {
   const { data: session } = authClient.useSession();
@@ -33,8 +34,10 @@ export default function EbookDetails({ ebook }) {
         const data = await res.json();
 
         setRole(data.role);
+
       } catch (err) {
         console.log(err);
+        toast.error("Failed to load role");
       }
     };
 
@@ -55,6 +58,7 @@ export default function EbookDetails({ ebook }) {
 
         setAlreadyPurchased(!!data?.purchased);
       } catch (err) {
+        toast.error("Failed to check purchase status");
         console.log(err);
       }
     };
@@ -83,6 +87,7 @@ export default function EbookDetails({ ebook }) {
         }
       } catch (err) {
         console.log(err);
+        toast.error("Failed to check bookmarks");
       }
     };
 
@@ -93,12 +98,12 @@ export default function EbookDetails({ ebook }) {
   const handleBookmark = async () => {
     try {
       if (!userEmail) {
-        alert("Please login first");
+        toast.error("Please login first");
         return;
       }
 
       if (isAdmin) {
-        alert("Admin cannot bookmark ebooks");
+        toast.error("Admin cannot bookmark ebooks");
         return;
       }
 
@@ -121,13 +126,14 @@ export default function EbookDetails({ ebook }) {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.message || "Bookmark failed");
+        toast.error(data.message || "Bookmark failed");
         return;
       }
 
       setBookmarked(data.bookmarked);
     } catch (err) {
       console.log(err);
+      toast.error("Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -137,22 +143,22 @@ export default function EbookDetails({ ebook }) {
   const handleBuy = async () => {
     try {
       if (!userEmail) {
-        alert("Please login first");
+        toast.error("Please login first");
         return;
       }
 
       if (isAdmin) {
-        alert("Admin cannot purchase ebooks");
+        toast.error("Admin cannot purchase ebooks");
         return;
       }
 
       if (isWriter) {
-        alert("Writer cannot buy own ebook");
+        toast.error("Writer cannot buy own ebook");
         return;
       }
 
       if (alreadyPurchased) {
-        alert("Already purchased");
+        toast.error("Already purchased");
         return;
       }
 
@@ -175,7 +181,7 @@ export default function EbookDetails({ ebook }) {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.message || "Payment failed");
+        toast.error(data.message || "Payment failed");
         return;
       }
 
@@ -184,7 +190,7 @@ export default function EbookDetails({ ebook }) {
       }
     } catch (err) {
       console.log(err);
-      alert("Payment error");
+      toast.error("Payment error");
     } finally {
       setBuyLoading(false);
     }
@@ -198,35 +204,42 @@ export default function EbookDetails({ ebook }) {
 
         <div className="grid lg:grid-cols-2 gap-0">
 
-          {/* IMAGE SECTION */}
-          <div className="bg-gradient-to-br from-slate-100 to-slate-200 p-6 md:p-10 flex justify-center items-start">
+       {/* IMAGE SECTION */}
 
-            <div className="w-full max-w-md lg:sticky lg:top-8">
+<div className="bg-gradient-to-br from-slate-50 via-white to-slate-100 p-6 md:p-10 lg:p-14 flex justify-center">
 
-              {!imgLoaded && (
-                <div className="w-full h-[500px] rounded-2xl bg-gray-300 animate-pulse" />
-              )}
+  <div className="w-full lg:sticky lg:top-8 flex justify-center">
 
-              <motion.img
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4 }}
-                src={ebook.coverImage}
-                alt={ebook.title}
-                onLoad={() => setImgLoaded(true)}
-                className="
-                  w-full
-                  h-[420px]
-                  sm:h-[500px]
-                  object-cover
-                  rounded-2xl
-                  shadow-2xl
-                  border
-                "
-              />
-            </div>
+    {!imgLoaded && (
+      <div className="w-full max-w-lg h-[620px] rounded-3xl bg-gray-200 animate-pulse" />
+    )}
 
-          </div>
+    <motion.img
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5 }}
+      src={ebook.coverImage}
+      alt={ebook.title}
+      onLoad={() => setImgLoaded(true)}
+      className="
+        w-full
+        max-w-xl
+        h-auto
+        max-h-[720px]
+        object-contain
+        rounded-3xl
+        shadow-[0_30px_80px_rgba(0,0,0,0.18)]
+        border
+        border-gray-200
+        bg-white
+        p-3
+      "
+    />
+
+  </div>
+
+</div>
+          
 
           {/* CONTENT */}
           <motion.div
@@ -321,9 +334,29 @@ export default function EbookDetails({ ebook }) {
                   overflow-y-auto
                 "
               >
-                <p className="text-gray-700 whitespace-pre-line leading-8 text-sm md:text-base">
-                  {ebook.description}
-                </p>
+                <p className="text-gray-700 whitespace-pre-line leading-8 text-sm md:text-base break-words">
+  {alreadyPurchased || isWriter || isAdmin
+    ? ebook.description
+    : `${(ebook.description || "").slice(0, 200)}...`}
+</p>
+{!alreadyPurchased && !isWriter && !isAdmin && (
+  <div className="mt-6 border-t pt-5">
+
+    <div className="rounded-xl bg-blue-50 border border-blue-200 p-4">
+
+      <h4 className="font-semibold text-blue-700">
+        🔒 Continue Reading
+      </h4>
+
+      <p className="text-sm text-gray-600 mt-2">
+        Purchase this ebook to unlock the complete description
+        and read the full story.
+      </p>
+
+    </div>
+
+  </div>
+)}
               </div>
 
             </div>
@@ -410,4 +443,4 @@ export default function EbookDetails({ ebook }) {
     </div>
   </div>
 );
-}
+}                      

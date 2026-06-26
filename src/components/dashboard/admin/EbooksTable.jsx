@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import TableSkeleton from "@/components/TableSkeleton";
 
 export default function EbooksTable() {
   const [ebooks, setEbooks] = useState([]);
@@ -17,6 +19,7 @@ export default function EbooksTable() {
       setEbooks(data || []);
     } catch (error) {
       console.log(error);
+      toast.error("Failed to load ebooks");
     } finally {
       setLoading(false);
     }
@@ -45,7 +48,8 @@ export default function EbooksTable() {
       );
 
       if (!res.ok) {
-        return alert("Update failed");
+        toast.error("Update failed");
+        return;
       }
 
       setEbooks((prev) =>
@@ -58,8 +62,15 @@ export default function EbooksTable() {
             : ebook
         )
       );
+
+      toast.success(
+        currentStatus
+          ? "Ebook unpublished successfully"
+          : "Ebook published successfully"
+      );
     } catch (error) {
       console.log(error);
+      toast.error("Something went wrong");
     }
   };
 
@@ -76,24 +87,28 @@ export default function EbooksTable() {
       );
 
       if (!res.ok) {
-        return alert("Delete failed");
+        toast.error("Delete failed");
+        return;
       }
 
       setEbooks((prev) =>
         prev.filter((ebook) => ebook._id !== id)
       );
+
+      toast.success(
+        "Ebook deleted successfully"
+      );
     } catch (error) {
       console.log(error);
+      toast.error("Something went wrong");
     }
   };
 
-  if (loading) {
-    return (
-      <div className="bg-white p-8 rounded-2xl shadow">
-        Loading ebooks...
-      </div>
-    );
-  }
+
+
+if (loading) {
+  return <TableSkeleton rows={6} />;
+}
 
   return (
     <>
@@ -105,15 +120,19 @@ export default function EbooksTable() {
                 <th className="px-6 py-4 text-left">
                   Title
                 </th>
+
                 <th className="px-6 py-4 text-left">
                   Writer
                 </th>
+
                 <th className="px-6 py-4 text-left">
                   Price
                 </th>
+
                 <th className="px-6 py-4 text-left">
                   Status
                 </th>
+
                 <th className="px-6 py-4 text-left">
                   Actions
                 </th>
@@ -161,7 +180,7 @@ export default function EbooksTable() {
                             ebook.published
                           )
                         }
-                        className="bg-blue-500 text-white px-3 py-2 rounded-lg"
+                        className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg transition"
                       >
                         {ebook.published
                           ? "Unpublish"
@@ -174,7 +193,7 @@ export default function EbooksTable() {
                             ebook._id
                           )
                         }
-                        className="bg-red-500 text-white px-3 py-2 rounded-lg"
+                        className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg transition"
                       >
                         Delete
                       </button>
@@ -216,16 +235,20 @@ export default function EbooksTable() {
                     ebook.published
                   )
                 }
-                className="flex-1 bg-blue-500 text-white py-2 rounded-lg"
+                className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg transition"
               >
-                Toggle
+                {ebook.published
+                  ? "Unpublish"
+                  : "Publish"}
               </button>
 
               <button
                 onClick={() =>
-                  handleDelete(ebook._id)
+                  handleDelete(
+                    ebook._id
+                  )
                 }
-                className="flex-1 bg-red-500 text-white py-2 rounded-lg"
+                className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg transition"
               >
                 Delete
               </button>

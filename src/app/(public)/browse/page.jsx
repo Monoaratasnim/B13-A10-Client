@@ -99,11 +99,19 @@ export default function BrowsePage() {
           className="rounded-xl border px-4 py-2"
         >
           <option value="all">All Genres</option>
-          <option value="Tech">Tech</option>
-          <option value="Novel">Novel</option>
+          <option value="Fiction">Fiction</option>
+          <option value="Mystery">Mystery</option>
           <option value="Horror">Horror</option>
           <option value="Fantasy">Fantasy</option>
+           <option value="Romance">Romance</option>
+          <option value="Sci-Fi">Sci-Fi</option>
+          <option value="Thriller">Thriller</option>
+          <option value="Biography">Biography</option>
+          <option value="Self Development">Self Development</option>
+          <option value="Poetry">Poetry</option>
         </select>
+
+  
 
         <select
           value={sort}
