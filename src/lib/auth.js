@@ -52,7 +52,7 @@ export const auth = betterAuth({
 
   hooks: {
     async afterSignUp(user) {
-      await db.collection("users").updateOne(
+      await db.collection("user").updateOne(
         { email: user.email },
         {
           $set: {
