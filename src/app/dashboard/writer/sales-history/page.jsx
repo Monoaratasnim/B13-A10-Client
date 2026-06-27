@@ -16,8 +16,14 @@ export default function SalesHistoryPage() {
     if (!email) return;
 
     try {
+      const {data:tokenData} = await authClient.token()
+      console.log(tokenData)
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_URL}/api/writer/sales?email=${email}`
+        `${process.env.NEXT_PUBLIC_URL}/api/writer/sales?email=${email}`,{
+              headers: {
+                authorization: `Bearer ${tokenData?.token}`
+              }
+            }
       );
 
       const data = await res.json();

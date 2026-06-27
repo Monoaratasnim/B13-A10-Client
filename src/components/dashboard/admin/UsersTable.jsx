@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { authClient } from "@/lib/auth-client";
 import toast from "react-hot-toast";
 import TableSkeleton from "@/components/TableSkeleton";
 
@@ -10,8 +11,14 @@ const [loading, setLoading] = useState(true);
 
 const loadUsers = async () => {
 try {
+   const {data:tokenData} = await authClient.token()
+    console.log(tokenData)
 const res = await fetch(
-`${process.env.NEXT_PUBLIC_URL}/api/admin/users`
+`${process.env.NEXT_PUBLIC_URL}/api/admin/users`,{
+            headers:{
+              authorization: `Bearer ${tokenData?.token}`
+            }
+          }
 );
 
 
@@ -36,12 +43,15 @@ loadUsers();
 
 const handleRoleChange = async (id, role) => {
 try {
+  const {data:tokenData} = await authClient.token()
+  console.log(tokenData)
 const res = await fetch(
-`${process.env.NEXT_PUBLIC_URL}/api/admin/users/${id}/role`,
+`${process.env.NEXT_PUBLIC_URL}/api/admin/users/${id}/role`,      
 {
 method: "PATCH",
 headers: {
 "Content-Type": "application/json",
+  authorization: `Bearer ${tokenData?.token}`
 },
 body: JSON.stringify({ role }),
 }
@@ -76,10 +86,15 @@ const confirmDelete = window.confirm(
 if (!confirmDelete) return;
 
 try {
+  const {data:tokenData} = await authClient.token()
+    console.log(tokenData)
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_URL}/api/admin/users/${id}`,
     {
       method: "DELETE",
+      headers:{
+        authorization: `Bearer ${tokenData?.token}`
+      }
     }
   );
 

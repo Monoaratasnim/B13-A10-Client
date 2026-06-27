@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { authClient } from "@/lib/auth-client";
 
 export default function EbookManageTable({
   ebooks,
@@ -19,10 +20,15 @@ export default function EbookManageTable({
     );
 
     try {
+       const {data:tokenData} = await authClient.token()
+       console.log(tokenData)
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_URL}/api/ebooks/${id}`,
         {
           method: "DELETE",
+          headers:{
+             authorization: `Bearer ${tokenData?.token}`
+          }
         }
       );
 
@@ -57,12 +63,15 @@ export default function EbookManageTable({
     );
 
     try {
+       const {data:tokenData} = await authClient.token()
+       console.log(tokenData)
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_URL}/api/ebooks/${id}/publish`,
         {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
+            authorization: `Bearer ${tokenData?.token}`
           },
           body: JSON.stringify({
             published: !currentStatus,

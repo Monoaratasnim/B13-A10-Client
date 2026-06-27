@@ -50,8 +50,14 @@ export default function EbookDetails({ ebook }) {
 
     const checkPurchase = async () => {
       try {
+         const {data:tokenData} = await authClient.token()
+         console.log(tokenData)
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_URL}/api/check-purchase?ebookId=${ebook._id}&email=${userEmail}`
+          `${process.env.NEXT_PUBLIC_URL}/api/check-purchase?ebookId=${ebook._id}&email=${userEmail}`,{
+            headers:{
+                authorization: `Bearer ${tokenData?.token}`
+            }
+          }
         );
 
         const data = await res.json();
@@ -72,8 +78,14 @@ export default function EbookDetails({ ebook }) {
 
     const fetchBookmarks = async () => {
       try {
+        const {data:tokenData} = await authClient.token()
+        console.log(tokenData)
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_URL}/api/my-bookmarks?email=${userEmail}`
+          `${process.env.NEXT_PUBLIC_URL}/api/my-bookmarks?email=${userEmail}`,{
+            headers:{
+              authorization: `Bearer ${tokenData?.token}`
+            }
+          }
         );
 
         const data = await res.json();
@@ -108,13 +120,15 @@ export default function EbookDetails({ ebook }) {
       }
 
       setLoading(true);
-
+       const {data:tokenData} = await authClient.token()
+        console.log(tokenData)
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_URL}/api/bookmarks`,
         {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
+            authorization: `Bearer ${tokenData?.token}`
           },
           body: JSON.stringify({
             email: userEmail,
@@ -163,13 +177,15 @@ export default function EbookDetails({ ebook }) {
       }
 
       setBuyLoading(true);
-
+       const {data:tokenData} = await authClient.token()
+        console.log(tokenData)
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_URL}/api/create-checkout-session`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            authorization: `Bearer ${tokenData?.token}`
           },
           body: JSON.stringify({
             ebookId: ebook._id,

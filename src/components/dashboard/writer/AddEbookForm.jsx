@@ -85,12 +85,15 @@ export default function AddEbookForm() {
         published: true,
       };
 
+      const {data:tokenData} = await authClient.token()
+      console.log(tokenData)
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_URL}/api/ebooks`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            authorization: `Bearer ${tokenData?.token}`
           },
           body: JSON.stringify(ebookData),
         }

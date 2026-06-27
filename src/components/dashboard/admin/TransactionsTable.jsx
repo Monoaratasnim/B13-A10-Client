@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { authClient } from "@/lib/auth-client";
 import TableSkeleton from "@/components/TableSkeleton";
 
 export default function TransactionsTable() {
@@ -10,8 +11,14 @@ export default function TransactionsTable() {
   useEffect(() => {
     const loadTransactions = async () => {
       try {
+         const {data:tokenData} = await authClient.token()
+         console.log(tokenData)
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_URL}/api/admin/transactions`
+          `${process.env.NEXT_PUBLIC_URL}/api/admin/transactions`,{
+            headers:{
+              authorization: `Bearer ${tokenData?.token}`
+            }
+          }
         );
 
         const data = await res.json();

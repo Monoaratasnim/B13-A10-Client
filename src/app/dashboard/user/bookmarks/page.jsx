@@ -15,17 +15,20 @@ export default function BookmarkPage() {
       setLoading(false);
       return;
     }
-
+  
     const fetchBookmarks = async () => {
       try {
+         const {data:tokenData} = await authClient.token()
+         console.log(tokenData)
         setLoading(true);
-
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_URL}/api/my-bookmarks?email=${session.user.email}`
+          `${process.env.NEXT_PUBLIC_URL}/api/my-bookmarks?email=${session.user.email}`,{
+              headers: {
+                authorization: `Bearer ${tokenData?.token}`
+              }
+            }
         );
-
         const data = await res.json();
-
         setEbooks(Array.isArray(data) ? data : []);
       } catch (error) {
         console.log("Bookmark fetch error:", error);

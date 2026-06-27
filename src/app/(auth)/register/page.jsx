@@ -101,9 +101,8 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-rose-50 via-white to-pink-50 px-4">
-
-      <Card className="w-full max-w-md p-6 space-y-6 rounded-2xl shadow-xl">
+  <div className="bg-[#FFF9F5] min-h-screen px-4 pt-8 pb-8 md:flex md:items-center md:justify-center">
+  <Card className="w-full max-w-md mx-auto bg-white border border-rose-100 rounded-3xl shadow-xl p-6 sm:p-8">
 
         <h1 className="text-2xl font-bold text-center">
           Create Account

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { authClient } from "@/lib/auth-client";
 
 export default function EditEbookForm({ ebook }) {
   const router = useRouter();
@@ -33,6 +34,8 @@ export default function EditEbookForm({ ebook }) {
     e.preventDefault();
 
     try {
+       const {data:tokenData} = await authClient.token()
+       console.log(tokenData)
       setLoading(true);
 
       const res = await fetch(
@@ -41,7 +44,9 @@ export default function EditEbookForm({ ebook }) {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            authorization: `Bearer ${tokenData?.token}`
           },
+        
           body: JSON.stringify({
             title,
             description,

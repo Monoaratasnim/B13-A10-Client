@@ -83,9 +83,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFF9F5] flex items-center justify-center px-4 py-10">
-
-      <Card className="w-full max-w-md bg-white border border-rose-100 rounded-3xl shadow-xl p-6 sm:p-8">
+  <div className="bg-[#FFF9F5] min-h-screen px-4 pt-8 pb-8 md:flex md:items-center md:justify-center">
+  <Card className="w-full max-w-md mx-auto bg-white border border-rose-100 rounded-3xl shadow-xl p-6 sm:p-8">
 
         {/* HEADER */}
         <div className="text-center mb-8">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
+import { authClient } from "@/lib/auth-client";
 import AdminStatsCard from "@/components/dashboard/admin/AdminStatsCard";
 import MonthlySalesChart from "@/components/dashboard/admin/MonthlySalesChart";
 import GenrePieChart from "@/components/dashboard/admin/GenrePieChart";
@@ -15,19 +15,33 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     const loadDashboard = async () => {
       try {
+         const {data:tokenData} = await authClient.token()
+         console.log(tokenData)
         const [
           statsRes,
           salesRes,
           genreRes,
         ] = await Promise.all([
           fetch(
-            `${process.env.NEXT_PUBLIC_URL}/api/admin/stats`
+            `${process.env.NEXT_PUBLIC_URL}/api/admin/stats`,{
+              headers: {
+                authorization: `Bearer ${tokenData?.token}`
+              }
+            }
           ),
           fetch(
-            `${process.env.NEXT_PUBLIC_URL}/api/admin/monthly-sales`
+            `${process.env.NEXT_PUBLIC_URL}/api/admin/monthly-sales`,{
+              headers: {
+                authorization: `Bearer ${tokenData?.token}`
+              }
+            }
           ),
           fetch(
-            `${process.env.NEXT_PUBLIC_URL}/api/admin/genre-stats`
+            `${process.env.NEXT_PUBLIC_URL}/api/admin/genre-stats`,{
+              headers: {
+                authorization: `Bearer ${tokenData?.token}`
+              }
+            }
           ),
         ]);
 

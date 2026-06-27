@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { authClient } from "@/lib/auth-client";
 import toast from "react-hot-toast";
 import TableSkeleton from "@/components/TableSkeleton";
 
@@ -10,8 +11,14 @@ export default function EbooksTable() {
 
   const loadEbooks = async () => {
     try {
+        const {data:tokenData} = await authClient.token()
+        console.log(tokenData)
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_URL}/api/admin/ebooks`
+        `${process.env.NEXT_PUBLIC_URL}/api/admin/ebooks`,{
+              headers: {
+                authorization: `Bearer ${tokenData?.token}`
+              }
+            }
       );
 
       const data = await res.json();
@@ -34,12 +41,15 @@ export default function EbooksTable() {
     currentStatus
   ) => {
     try {
+       const {data:tokenData} = await authClient.token()
+      console.log(tokenData)
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_URL}/api/admin/ebooks/${id}/publish`,
         {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
+            authorization: `Bearer ${tokenData?.token}`
           },
           body: JSON.stringify({
             published: !currentStatus,
@@ -79,10 +89,15 @@ export default function EbooksTable() {
       return;
 
     try {
+       const {data:tokenData} = await authClient.token()
+        console.log(tokenData)
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_URL}/api/admin/ebooks/${id}`,
         {
           method: "DELETE",
+          headers:{
+             authorization: `Bearer ${tokenData?.token}`
+          }
         }
       );
 

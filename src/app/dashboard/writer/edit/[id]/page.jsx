@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 import EditEbookForm from "@/components/dashboard/writer/EditEbookForm";
+
 
 export default function EditEbookPage() {
   const params = useParams();
@@ -13,8 +15,14 @@ export default function EditEbookPage() {
   useEffect(() => {
     const fetchBook = async () => {
       try {
+         const {data:tokenData} = await authClient.token()
+         console.log(tokenData)
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_URL}/api/writer/ebooks/${params.id}`
+          `${process.env.NEXT_PUBLIC_URL}/api/writer/ebooks/${params.id}`,{
+              headers: {
+                authorization: `Bearer ${tokenData?.token}`
+              }
+            }
         );
 
         const data = await res.json();
