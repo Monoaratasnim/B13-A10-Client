@@ -410,7 +410,7 @@ export default function EbookDetails({ ebook }) {
   {loading
     ? "Loading..."
     : alreadyPurchased
-    ? ""
+    ? "Bookmark"
     : ebook.sold
     ? "Bookmark"
     : bookmarked
