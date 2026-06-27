@@ -41,7 +41,7 @@ export default function TransactionsTable() {
   return (
     <div className="bg-white rounded-2xl shadow overflow-hidden">
 
-      {/* ================= MOBILE CARDS ================= */}
+    
       <div className="block md:hidden p-4 space-y-4">
         {transactions.length > 0 ? (
           transactions.map((tx) => (
