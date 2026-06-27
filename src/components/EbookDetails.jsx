@@ -381,31 +381,42 @@ export default function EbookDetails({ ebook }) {
             {!isAdmin && (
               <div className="flex flex-col sm:flex-row gap-4 mt-8">
 
-                <button
-                  onClick={handleBookmark}
-                  disabled={loading}
-                  className={`
-                    w-full
-                    sm:w-auto
-                    px-6
-                    py-3
-                    rounded-xl
-                    border
-                    font-medium
-                    transition
-                    ${
-                      bookmarked
-                        ? "bg-black text-white"
-                        : "bg-white hover:bg-gray-100"
-                    }
-                  `}
-                >
-                  {loading
-                    ? "Loading..."
-                    : bookmarked
-                    ? "Bookmarked ✓"
-                    : "Bookmark"}
-                </button>
+              <button
+  onClick={handleBookmark}
+  disabled={
+    loading ||
+    alreadyPurchased ||
+    ebook.sold
+  }
+  className={`
+    w-full
+    sm:w-auto
+    px-6
+    py-3
+    rounded-xl
+    border
+    font-medium
+    transition
+
+    ${
+      alreadyPurchased || ebook.sold
+        ? "bg-gray-300 text-gray-600 cursor-not-allowed border-gray-300"
+        : bookmarked
+        ? "bg-black text-white border-black"
+        : "bg-white hover:bg-gray-100 border-gray-300"
+    }
+  `}
+>
+  {loading
+    ? "Loading..."
+    : alreadyPurchased
+    ? "Purchased"
+    : ebook.sold
+    ? "Sold"
+    : bookmarked
+    ? "Bookmarked ✓"
+    : "Bookmark"}
+</button>
 
                <button
   onClick={handleBuy}
