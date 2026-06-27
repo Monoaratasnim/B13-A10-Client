@@ -1,36 +1,257 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 📚 Fable – Ebook Sharing Platform
 
-## Getting Started
+Fable is a modern full-stack MERN ebook sharing platform where readers can discover, purchase, and enjoy digital books while writers can publish and manage their own ebooks. The platform features secure authentication, Stripe-powered ebook purchases with webhook verification, role-based dashboards, analytics and a responsive user interface.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 🌐 Live Website
+
+**Live Site:** https://fable-client-six.vercel.app
+
+### Admin Credentials
+
+**Email:** admin@fable.com
+
+**Password:** Admin@123
+
+---
+
+## 🔗 Repositories
+
+### Client Repository
+https://github.com/Monoaratasnim/B13-A10-Client
+
+### Server Repository
+https://github.com/Monoaratasnim/B13-A10-Server
+
+---
+
+# ✨ Features
+
+## Authentication
+
+- Email & Password Authentication
+- Google Authentication (BetterAuth)
+- JWT Authentication
+- Protected Routes
+- Persistent Login After Refresh
+- Role-based Authorization
+
+---
+
+## User Features
+
+- Browse all ebooks
+- Search ebooks by title
+- Search ebooks by writer
+- Filter by genre
+- Filter by price range
+- Sort by newest
+- Sort by price
+- Ebook details page
+- Stripe ebook purchase
+- Purchase history
+- Purchased ebook library
+- Read full ebook after purchase
+- Bookmark ebooks
+- Profile page
+
+---
+
+## Writer Features
+
+- Writer dashboard
+- One-time verification payment
+- Upload ebooks
+- Edit ebooks
+- Delete ebooks
+- Publish / Unpublish ebooks
+- Sales history
+- Bookmark page
+
+---
+
+## Admin Features
+
+- Dashboard analytics
+- Manage users
+- Change user roles
+- Delete users
+- Manage all ebooks
+- Publish / Unpublish ebooks
+- Delete ebooks
+- View all transactions
+- Revenue overview
+- Monthly sales chart
+- Genre distribution chart
+
+---
+
+## Ebook Features
+
+- Responsive ebook cards
+- Featured ebooks section
+- Ebook genres section
+- Top writers section
+- Sold badge
+- Purchase restrictions
+- Bookmark restrictions
+- High quality cover images
+- Full content unlocked after purchase
+
+---
+
+## Payment Features
+
+- Stripe Checkout
+- Secure payment verification
+- Stripe Webhooks
+- Purchase history
+- Publishing verification payment
+- Transaction records
+
+---
+
+## UI Features
+
+- Responsive Design
+- Mobile Friendly
+- Hero Carousel
+- Framer Motion Animations
+- Skeleton Loading
+- Global Loading Spinner
+- Custom 404 Page
+- Error Boundary
+- Toast Notifications
+
+---
+
+# 🛠️ Technologies Used
+
+## Frontend
+
+- Next.js 16
+- React 19
+- Tailwind CSS
+- HeroUI
+- Framer Motion
+- React Hook Form
+- Zod
+- Swiper
+- Axios
+- React Hot Toast
+- Recharts
+
+---
+
+## Backend
+
+- Express.js
+- MongoDB
+- BetterAuth
+- JWT
+- Stripe API
+- ImgBB API
+
+---
+
+# 📦 NPM Packages Used
+
+## Client
+
+- next
+- react
+- react-dom
+- tailwindcss
+- @heroui/react
+- better-auth
+- @better-auth/mongo-adapter
+- mongodb
+- stripe
+- @stripe/stripe-js
+- react-hook-form
+- @hookform/resolvers
+- zod
+- axios
+- framer-motion
+- swiper
+- react-hot-toast
+- react-icons
+- lucide-react
+- recharts
+
+---
+
+## Server
+
+- express
+- mongodb
+- cors
+- dotenv
+- stripe
+- better-auth
+- jsonwebtoken
+
+---
+
+
+# 🔐 Environment Variables
+
+## Client
+
+```
+NEXT_PUBLIC_URL=
+NEXT_PUBLIC_SERVER_URL=
+NEXT_PUBLIC_IMGBB_KEY=
+
+BETTER_AUTH_URL=
+BETTER_AUTH_SECRET=
+
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+
+MONGODB_URI=
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Server
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+PORT=
 
-## Learn More
+MONGODB_URI=
 
-To learn more about Next.js, take a look at the following resources:
+JWT_SECRET=
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+CLIENT_URL=
 
-## Deploy on Vercel
+IMGBB_KEY=
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Install Dependencies
+
+### Client
+
+```bash
+npm install
+```
+
+### Server
+
+```bash
+npm install
+```
+
+
+
+# 👨‍💻 Author
+
+Monoara Tasnim
+
+---
+

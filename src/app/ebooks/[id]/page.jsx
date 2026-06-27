@@ -1,16 +1,9 @@
 import EbookDetails from "@/components/EbookDetails";
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
+
 async function getEbook(id) {
-  const {token} = await auth.api.getToken({
-    headers: await headers()
-  })
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_URL}/api/ebooks/${id}`,
-    { cache: "no-store",
-       headers:{
-              authorization: `Bearer ${token}`
-            }
+    { cache: "no-store"
      }
   );
 
