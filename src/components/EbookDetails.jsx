@@ -407,39 +407,41 @@ export default function EbookDetails({ ebook }) {
                     : "Bookmark"}
                 </button>
 
-                <button
-                  onClick={handleBuy}
-                  disabled={
-                    isWriter ||
-                    buyLoading ||
-                    alreadyPurchased
-                  }
-                  className="
-                    w-full
-                    sm:w-auto
-                    px-6
-                    py-3
-                    rounded-xl
-                    bg-rose-500
-                    hover:bg-rose-600
-                    text-white
-                    font-medium
-                    transition
-                    disabled:opacity-50
-                    disabled:cursor-not-allowed
-                  "
-                >
-                  {buyLoading
-                    ? "Processing..."
-                    : isWriter
-                    ? "You are Writer"
-                    : alreadyPurchased
-                    ? "Already Purchased"
-                    : ebook.sold
-                    ? "Sold Out"
-                    : "Buy Now"}
-                </button>
-
+               <button
+  onClick={handleBuy}
+  disabled={
+    isWriter ||
+    buyLoading ||
+    alreadyPurchased ||
+    ebook.sold
+  }
+  className={`
+    w-full
+    sm:w-auto
+    px-6
+    py-3
+    rounded-xl
+    font-medium
+    transition
+    disabled:cursor-not-allowed
+    disabled:opacity-60
+    ${
+      ebook.sold
+        ? "bg-gray-400"
+        : "bg-rose-500 hover:bg-rose-600 text-white"
+    }
+  `}
+>
+  {buyLoading
+    ? "Processing..."
+    : isWriter
+    ? "You are the Writer"
+    : alreadyPurchased
+    ? "Already Purchased"
+    : ebook.sold
+    ? "Sold"
+    : "Buy Now"}
+</button>
               </div>
             )}
 
