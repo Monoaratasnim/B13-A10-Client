@@ -76,7 +76,7 @@ export default function BrowsePage() {
         </p>
       </motion.div>
 
-      {/* FILTERS */}
+
 
       <div className="mt-8 grid gap-3 md:grid-cols-3 lg:grid-cols-6">
         <input
