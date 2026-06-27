@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession, signOut } from "@/lib/auth-client";
 import toast from "react-hot-toast";
+import { Menu, X } from "lucide-react";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -61,7 +62,7 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-rose-100 bg-[#FFF9F5]/90 backdrop-blur-xl">
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+     <nav className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* ================= DESKTOP ================= */}
         <div className="flex h-18 items-center justify-between">
@@ -164,43 +165,132 @@ export default function Navbar() {
           </div>
 
           {/* MOBILE */}
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden"
-          >
-            ☰
-          </button>
+        {/* Mobile Menu Button */}
+<button
+  onClick={() => setMobileOpen(!mobileOpen)}
+  className="md:hidden p-2 rounded-lg hover:bg-rose-50 transition"
+  aria-label="Toggle Menu"
+>
+  {mobileOpen ? (
+    <X className="w-7 h-7 text-rose-600" />
+  ) : (
+    <Menu className="w-7 h-7 text-rose-600" />
+  )}
+</button>
         </div>
 
-        {/* MOBILE MENU */}
-        {mobileOpen && (
-          <div className="md:hidden border-t py-4">
+     {/* MOBILE MENU */}
+<div
+  className={`md:hidden absolute top-full left-0 w-full bg-white border-t border-rose-100 shadow-xl overflow-hidden transition-all duration-300 ease-in-out ${
+    mobileOpen
+      ? "max-h-[500px] opacity-100"
+      : "max-h-0 opacity-0 pointer-events-none"
+  }`}
+>
+  <div className="px-6 py-5">
 
-            <Link href="/" className="block py-2">Home</Link>
-            <Link href="/browse" className="block py-2">Browse</Link>
+    {/* User Info */}
+    {isLoggedIn && (
+      <div className="flex items-center gap-3 pb-5 mb-5 border-b border-rose-100">
 
-            {!isLoggedIn ? (
-              <>
-                <Link href="/login" className="block py-2">Login</Link>
-                <Link href="/register" className="block py-2">Sign Up</Link>
-              </>
-            ) : (
-              <>
-                <Link href={getDashboardLink()} className="block py-2">
-                  Dashboard
-                </Link>
-
-                <button
-                  onClick={handleLogout}
-                  className="block py-2 text-red-500"
-                >
-                  Logout
-                </button>
-              </>
-            )}
-
+        {user?.image ? (
+          <img
+            src={user.image}
+            alt={user.name}
+            className="h-12 w-12 rounded-full object-cover border"
+          />
+        ) : (
+          <div className="h-12 w-12 rounded-full bg-rose-500 text-white flex items-center justify-center font-bold">
+            {user?.name?.charAt(0)}
           </div>
         )}
+
+        <div>
+          <p className="font-semibold text-stone-800">
+            {user?.name}
+          </p>
+
+          <p className="text-sm text-gray-500 capitalize">
+            {user?.role}
+          </p>
+        </div>
+
+      </div>
+    )}
+
+    <div className="flex flex-col gap-2">
+
+      <Link
+        href="/"
+        onClick={() => setMobileOpen(false)}
+        className={`rounded-xl px-4 py-3 transition ${
+          isActive("/")
+            ? "bg-rose-50 text-rose-600 font-semibold"
+            : "hover:bg-rose-50"
+        }`}
+      >
+        Home
+      </Link>
+
+      <Link
+        href="/browse"
+        onClick={() => setMobileOpen(false)}
+        className={`rounded-xl px-4 py-3 transition ${
+          isActive("/browse")
+            ? "bg-rose-50 text-rose-600 font-semibold"
+            : "hover:bg-rose-50"
+        }`}
+      >
+        Browse Ebooks
+      </Link>
+
+      {isLoggedIn ? (
+        <>
+          <Link
+            href={getDashboardLink()}
+            onClick={() => setMobileOpen(false)}
+            className={`rounded-xl px-4 py-3 transition ${
+              isActive("/dashboard")
+                ? "bg-rose-50 text-rose-600 font-semibold"
+                : "hover:bg-rose-50"
+            }`}
+          >
+            Dashboard
+          </Link>
+
+          <button
+            onClick={() => {
+              setMobileOpen(false);
+              handleLogout();
+            }}
+            className="mt-3 rounded-xl bg-red-50 px-4 py-3 text-left font-medium text-red-600 hover:bg-red-100 transition"
+          >
+            Logout
+          </button>
+        </>
+      ) : (
+        <>
+          <Link
+            href="/login"
+            onClick={() => setMobileOpen(false)}
+            className="rounded-xl px-4 py-3 hover:bg-rose-50 transition"
+          >
+            Login
+          </Link>
+
+          <Link
+            href="/register"
+            onClick={() => setMobileOpen(false)}
+            className="mt-2 rounded-xl bg-rose-500 px-4 py-3 text-center font-semibold text-white hover:bg-rose-600 transition"
+          >
+            Sign Up
+          </Link>
+        </>
+      )}
+
+    </div>
+  </div>
+</div>
 
       </nav>
     </header>
